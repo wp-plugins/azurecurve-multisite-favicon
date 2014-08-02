@@ -4,7 +4,7 @@ Plugin Name: azurecurve Multisite Favicon
 Plugin URI: http://wordpress.azurecurve.co.uk/plugins/multisite-favicon/
 Description: Allows Setting of Separate Favicon For Each Site In A Multisite Installation
 Author: azurecurve
-Version: 1.0.0
+Version: 1.0.1
 Author URI: http://wordpress.azurecurve.co.uk/
 
 This program is free software; you can redistribute it and/or
@@ -133,7 +133,7 @@ function azc_msfi_config_page() {
 				<input name="page_options" type="hidden" value="default_path, default_favicon" />
 				
 				<!-- Adding security through hidden referrer field -->
-				<?php wp_nonce_field( 'azc_msfi' ); ?>
+				<?php wp_nonce_field( 'azc_msfi_nonce', 'azc_msfi_nonce' ); ?>
 				<table class="form-table">
 				<tr><td colspan=2>
 					<p>Set the path for where you will be storing the favicon; default is to the plugin/images folder.</p>
@@ -165,28 +165,27 @@ function process_azc_msfi_options() {
 		wp_die( 'Not allowed' );
 	}
 	// Check that nonce field created in configuration form is present
-	check_admin_referer( 'azc_msfi' );
-	settings_fields('azc_msfi');
-	
-	// Retrieve original plugin options array
-	$options = get_option( 'azc_msfi_options' );
-	
-	$option_name = 'default_path';
-	if ( isset( $_POST[$option_name] ) ) {
-		$options[$option_name] = ($_POST[$option_name]);
+	if ( ! empty( $_POST ) && check_admin_referer( 'azc_msfi_nonce', 'azc_msfi_nonce' ) ) {
+		// Retrieve original plugin options array
+		$options = get_option( 'azc_msfi_options' );
+		
+		$option_name = 'default_path';
+		if ( isset( $_POST[$option_name] ) ) {
+			$options[$option_name] = ($_POST[$option_name]);
+		}
+		
+		$option_name = 'default_favicon';
+		if ( isset( $_POST[$option_name] ) ) {
+			$options[$option_name] = ($_POST[$option_name]);
+		}
+		
+		// Store updated options array to database
+		update_option( 'azc_msfi_options', $options );
+		
+		// Redirect the page to the configuration form that was processed
+		wp_redirect( add_query_arg( 'page', 'azurecurve-favicon', admin_url( 'options-general.php' ) ) );
+		exit;
 	}
-	
-	$option_name = 'default_favicon';
-	if ( isset( $_POST[$option_name] ) ) {
-		$options[$option_name] = ($_POST[$option_name]);
-	}
-	
-	// Store updated options array to database
-	update_option( 'azc_msfi_options', $options );
-	
-	// Redirect the page to the configuration form that was processed
-	wp_redirect( add_query_arg( 'page', 'azurecurve-favicon', admin_url( 'options-general.php' ) ) );
-	exit;
 }
 
 add_action('network_admin_menu', 'add_azc_msfi_network_settings_page');
@@ -216,7 +215,7 @@ function azc_msfi_network_settings_page(){
 				<input name="page_options" type="hidden" value="default_path, default_favicon" />
 				
 				<!-- Adding security through hidden referrer field -->
-				<?php wp_nonce_field( 'azc_msfi' ); ?>
+				<?php wp_nonce_field( 'azc_msfi_nonce', 'azc_msfi_nonce' ); ?>
 				<table class="form-table">
 				<tr><td colspan=2>
 					<p>Set the default path for where you will be storing the favicons; default is to the plugin/images folder.</p>
@@ -241,25 +240,25 @@ add_action('network_admin_edit_update_azc_msfi_network_options', 'process_azc_ms
 
 function process_azc_msfi_network_options(){     
 	if(!current_user_can('manage_network_options')) wp_die('FU');
-	check_admin_referer('azc_msfi');
-	
-	// Retrieve original plugin options array
-	$options = get_site_option( 'azc_msfi_options' );
+	if ( ! empty( $_POST ) && check_admin_referer( 'azc_msfi_nonce', 'azc_msfi_nonce' ) ) {
+		// Retrieve original plugin options array
+		$options = get_site_option( 'azc_msfi_options' );
 
-	$option_name = 'default_path';
-	if ( isset( $_POST[$option_name] ) ) {
-		$options[$option_name] = ($_POST[$option_name]);
+		$option_name = 'default_path';
+		if ( isset( $_POST[$option_name] ) ) {
+			$options[$option_name] = ($_POST[$option_name]);
+		}
+
+		$option_name = 'default_favicon';
+		if ( isset( $_POST[$option_name] ) ) {
+			$options[$option_name] = ($_POST[$option_name]);
+		}
+		
+		update_site_option( 'azc_msfi_options', $options );
+
+		wp_redirect(network_admin_url('settings.php?page=azurecurve-multisite-favicon'));
+		exit;  
 	}
-
-	$option_name = 'default_favicon';
-	if ( isset( $_POST[$option_name] ) ) {
-		$options[$option_name] = ($_POST[$option_name]);
-	}
-	
-	update_site_option( 'azc_msfi_options', $options );
-
-	wp_redirect(network_admin_url('settings.php?page=azurecurve-multisite-favicon'));
-	exit;  
 }
 
 ?>
