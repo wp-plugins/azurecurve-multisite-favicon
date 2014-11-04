@@ -4,7 +4,7 @@ Plugin Name: azurecurve Multisite Favicon
 Plugin URI: http://wordpress.azurecurve.co.uk/plugins/multisite-favicon/
 Description: Allows Setting of Separate Favicon For Each Site In A Multisite Installation
 Author: azurecurve
-Version: 1.0.1
+Version: 1.0.2
 Author URI: http://wordpress.azurecurve.co.uk/
 
 This program is free software; you can redistribute it and/or
