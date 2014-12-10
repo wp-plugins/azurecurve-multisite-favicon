@@ -2,10 +2,15 @@
 /*
 Plugin Name: azurecurve Multisite Favicon
 Plugin URI: http://wordpress.azurecurve.co.uk/plugins/multisite-favicon/
+
 Description: Allows Setting of Separate Favicon For Each Site In A Multisite Installation
+Version: 1.0.3
+
 Author: azurecurve
-Version: 1.0.2
 Author URI: http://wordpress.azurecurve.co.uk/
+
+Text Domain: azurecurve-multisite-favicon
+Domain Path: /languages
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -23,6 +28,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 The full copy of the GNU General Public License is available here: http://www.gnu.org/licenses/gpl.txt
  */
+
+add_action('plugins_loaded', 'azc_msfi_load_plugin_textdomain');
+
+function azc_msfi_load_plugin_textdomain(){
+	
+	$loaded = load_plugin_textdomain( 'azurecurve-multisite-favicon', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	//if ($loaded){ echo 'true'; }else{ echo 'false'; }
+}
 
 add_action( 'wp_head', 'azurecurve_msfi_load_favicon' );
 
@@ -119,7 +132,7 @@ function azc_msfi_settings_menu() {
 
 function azc_msfi_config_page() {
 	if (!current_user_can('manage_options')) {
-        wp_die('You do not have sumsficient permissions to access this page.');
+        wp_die(__('You do not have sufficient permissions to access this page.', 'azurecurve-multisite-favicon'));
     }
 	
 	// Retrieve plugin configuration options from database
@@ -127,7 +140,7 @@ function azc_msfi_config_page() {
 	?>
 	<div id="azc-msfi-general" class="wrap">
 		<fieldset>
-			<h2>azurecurve Favicon Configuration</h2>
+			<h2><?php _e('azurecurve Favicon Configuration', 'azurecurve-multisite-favicon'); ?></h2>
 			<form method="post" action="admin-post.php">
 				<input type="hidden" name="action" value="save_azc_msfi_options" />
 				<input name="page_options" type="hidden" value="default_path, default_favicon" />
@@ -136,15 +149,15 @@ function azc_msfi_config_page() {
 				<?php wp_nonce_field( 'azc_msfi_nonce', 'azc_msfi_nonce' ); ?>
 				<table class="form-table">
 				<tr><td colspan=2>
-					<p>Set the path for where you will be storing the favicon; default is to the plugin/images folder.</p>
+					<p><?php _e('Set the path for where you will be storing the favicon; default is to the plugin/images folder.', 'azurecurve-multisite-favicon'); ?></p>
 				</td></tr>
-				<tr><th scope="row"><label for="width">Path</label></th><td>
+				<tr><th scope="row"><label for="width"><?php _e('Path', 'azurecurve-multisite-favicon'); ?></label></th><td>
 					<input type="text" name="default_path" value="<?php echo esc_html( stripslashes($options['default_path']) ); ?>" class="large-text" />
-					<p class="description">Set folder for favicon</p>
+					<p class="description"><?php _e('Set folder for favicon', 'azurecurve-multisite-favicon'); ?></p>
 				</td></tr>
-				<tr><th scope="row"><label for="width">Favicon</label></th><td>
+				<tr><th scope="row"><label for="width"><?php _e('Favicon', 'azurecurve-multisite-favicon'); ?></label></th><td>
 					<input type="text" name="default_favicon" value="<?php echo esc_html( stripslashes($options['default_favicon']) ); ?>" class="regular-text" />
-					<p class="description">Set favicon name</p>
+					<p class="description"><?php _e('Set favicon name', 'azurecurve-multisite-favicon'); ?></p>
 				</td></tr>
 				</table>
 				<input type="submit" value="Submit" class="button-primary"/>
@@ -209,7 +222,7 @@ function azc_msfi_network_settings_page(){
 	?>
 	<div id="azc-msfi-general" class="wrap">
 		<fieldset>
-			<h2>azurecurve Multisite Favicon Configuration</h2>
+			<h2><?php _e('azurecurve Multisite Favicon Configuration', 'azurecurve-multisite-favicon'); ?></h2>
 			<form action="edit.php?action=update_azc_msfi_network_options" method="post">
 				<input type="hidden" name="action" value="save_azc_msfi_network_options" />
 				<input name="page_options" type="hidden" value="default_path, default_favicon" />
@@ -218,15 +231,15 @@ function azc_msfi_network_settings_page(){
 				<?php wp_nonce_field( 'azc_msfi_nonce', 'azc_msfi_nonce' ); ?>
 				<table class="form-table">
 				<tr><td colspan=2>
-					<p>Set the default path for where you will be storing the favicons; default is to the plugin/images folder.</p>
+					<p><?php _e('Set the default path for where you will be storing the favicons; default is to the plugin/images folder.', 'azurecurve-multisite-favicon'); ?></p>
 				</td></tr>
-				<tr><th scope="row"><label for="width">Default Path</label></th><td>
+				<tr><th scope="row"><label for="width"><?php _e('Default Path', 'azurecurve-multisite-favicon'); ?></label></th><td>
 					<input type="text" name="default_path" value="<?php echo esc_html( stripslashes($options['default_path']) ); ?>" class="large-text" />
-					<p class="description">Set default folder for favicons</p>
+					<p class="description"><?php _e('Set default folder for favicons', 'azurecurve-multisite-favicon'); ?></p>
 				</td></tr>
-				<tr><th scope="row"><label for="width">Default Favicon</label></th><td>
+				<tr><th scope="row"><label for="width"><?php _e('Default Favicon', 'azurecurve-multisite-favicon'); ?></label></th><td>
 					<input type="text" name="default_favicon" value="<?php echo esc_html( stripslashes($options['default_favicon']) ); ?>" class="regular-text" />
-					<p class="description">Set default favicon used when no img attribute set</p>
+					<p class="description"><?php _e('Set default favicon used when no img attribute set', 'azurecurve-multisite-favicon'); ?></p>
 				</td></tr>
 				</table>
 				<input type="submit" value="Submit" class="button-primary" />
